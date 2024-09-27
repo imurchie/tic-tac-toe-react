@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createElement, useState } from "react";
 
 function calculateWinner(squares) {
   const lines = [
@@ -44,26 +44,19 @@ function Board({xIsNext, squares, onPlay}) {
   const winner = calculateWinner(squares);
   const status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? "X" : "O"}`;
 
-  return (
-    <>
-      <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
-    </>
-  );
+  // loop through and create the grid for the board
+  let rows = [];
+  for (let i = 0; i < 3; i++) {
+    let els = [];
+    for (let j = 3 * i; els.length < 3; j++) {
+      els.push(createElement(Square, {value: squares[j], onSquareClick: () => handleClick(j)}));
+    }
+
+    rows.push(createElement("div", {className: "board-row"}, ...els));
+  }
+
+  // create the whole board, with a status bar at the top
+  return createElement("div", {className: "status"}, status, ...rows)
 }
 
 export default function Game() {
